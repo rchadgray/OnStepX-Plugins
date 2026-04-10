@@ -45,6 +45,23 @@ You must copy the /serialBluetoothConfig directory into the OnStepX/src/plugins 
 
 Configuration settings are in /serialBluetoothConfig/Config.h
 
+## Axis1 Limit Controller
+
+This plugin provides a serial command to disable the under-pole axis limits, which can be useful when performing polar alignment with software like ASIAIR or INDI.
+
+You must copy the /axis1LimitController directory into the OnStepX/src/plugins directory and add an entry for it in Plugins.config.h similar to the following:
+
+- `#define PLUGIN1 axis1LimitControllerPlugin`
+- `#define PLUGIN1_COMMAND_PROCESSING ON`
+- `#include "axis1LimitController/Axis1LimitController.h"`
+
+Configuration settings are in /axis1LimitController/Config.h
+
+### Serial Commands
+
+- `:XALD#` - Disables the axis 1 limits by setting them to -360 and 360 degrees.
+- `:XALE#` - Enables the axis 1 limits to their default values (configurable in `Config.h`).
+
 ## ElegantOTA
 
 First, you must add [ElegantOTA](https://docs.elegantota.pro/) to your libraries. Follow the instructions [here](https://docs.elegantota.pro/getting-started/installation).
