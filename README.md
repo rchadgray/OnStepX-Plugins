@@ -55,12 +55,10 @@ You must copy the /Axis1LimitDisable directory into the OnStepX/src/plugins dire
 - `#define PLUGIN1_COMMAND_PROCESSING ON`
 - `#include "Axis1LimitDisable/Axis1LimitDisable.h"`
 
-Configuration settings are in /Axis1LimitDisable/Config.h
-
 ### Serial Commands
 
 - `:XADD#` - Disables the axis 1 limits by setting them to -360 and 360 degrees.
-- `:XADE#` - Enables the axis 1 limits to their default values (configurable in `Config.h`).
+- `:XADE#` - Enables the axis 1 limits to their default values from OnStepX's configuration.
 
 ## ElegantOTA
 

@@ -1,8 +1,8 @@
 // Axis1LimitDisablePlugin plugin
 #include "Axis1LimitDisable.h"
-#include "Config.h"
 #include "../../Common.h"
 #include "../../lib/serial/Serial_Local.h"
+#include "../../lib/settings/Settings.h"
 
 // The command handler for the plugin
 bool Axis1LimitDisablePlugin::command(char reply[], char command[], char parameter[], bool *suppressFrame, bool *numericReply, CommandError *commandError) {
@@ -14,9 +14,9 @@ bool Axis1LimitDisablePlugin::command(char reply[], char command[], char paramet
       VLF("MSG: Axis1LimitDisable, limits disabled");
     } else if (parameter[0] == 'E') { // Enable
       char cmd[20];
-      sprintf(cmd, ":SXA1,2,%d#", POLAR_ALIGN_LIMIT_MIN_DEFAULT);
+      sprintf(cmd, ":SXA1,2,%.3f#", settings.get(AXIS1_LIMIT_MIN));
       SERIAL_LOCAL.transmit(cmd);
-      sprintf(cmd, ":SXA1,3,%d#", POLAR_ALIGN_LIMIT_MAX_DEFAULT);
+      sprintf(cmd, ":SXA1,3,%.3f#", settings.get(AXIS1_LIMIT_MAX));
       SERIAL_LOCAL.transmit(cmd);
       strcpy(reply, "Axis1 limits enabled");
       VLF("MSG: Axis1LimitDisable, limits enabled");
