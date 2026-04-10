@@ -1,10 +1,10 @@
-// Axis1LimitControllerPlugin plugin
+// Axis1LimitDisablePlugin plugin
 #pragma once
 
-class Axis1LimitControllerPlugin {
+class Axis1LimitDisablePlugin {
 public:
   void init();
   bool command(char reply[], char command[], char parameter[], bool *suppressFrame, bool *numericReply, CommandError *commandError);
 };
 
-extern Axis1LimitControllerPlugin axis1LimitControllerPlugin;
+extern Axis1LimitDisablePlugin axis1LimitDisablePlugin;
