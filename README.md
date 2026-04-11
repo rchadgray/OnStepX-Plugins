@@ -49,6 +49,8 @@ Configuration settings are in /serialBluetoothConfig/Config.h
 
 This plugin provides a serial command to disable the under-pole axis limits, which can be useful when performing polar alignment with software like ASIAIR or INDI.
 
+It also includes a feature to automatically disable the axis 1 limits when the mount is parking, and re-enable them when the mount is no longer parked. This is useful for roll-off roof observatories. Before re-enabling the limits, the plugin will check if the mount is in a safe position. If not, it will automatically move Axis1 to 0 degrees before enabling the limits.
+
 You must copy the /Axis1LimitDisable directory into the OnStepX/src/plugins directory and add an entry for it in Plugins.config.h similar to the following:
 
 - `#define PLUGIN1 axis1LimitDisablePlugin`
