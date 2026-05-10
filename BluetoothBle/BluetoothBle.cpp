@@ -20,15 +20,15 @@ static const char *NUS_RX_CHAR_UUID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
 // ── BLE callbacks ─────────────────────────────────────────────────────────────
 
 class BleServerCallbacks : public NimBLEServerCallbacks {
-  void onConnect(NimBLEServer *) override    { bluetoothBle.onConnect();    }
-  void onDisconnect(NimBLEServer *) override {
+  void onConnect(NimBLEServer *, NimBLEConnInfo &) override { bluetoothBle.onConnect(); }
+  void onDisconnect(NimBLEServer *, NimBLEConnInfo &, int) override {
     bluetoothBle.onDisconnect();
     NimBLEDevice::startAdvertising();  // re-advertise so the app can reconnect
   }
 };
 
 class BleWriteCallbacks : public NimBLECharacteristicCallbacks {
-  void onWrite(NimBLECharacteristic *ch) override {
+  void onWrite(NimBLECharacteristic *ch, NimBLEConnInfo &) override {
     const std::string &v = ch->getValue();
     if (!v.empty())
       bluetoothBle.onBleWrite(reinterpret_cast<const uint8_t *>(v.data()), v.length());
@@ -47,7 +47,9 @@ void BluetoothBle::init() {
   mutex = xSemaphoreCreateMutex();
   if (!mutex) { DLF("ERR: BluetoothBle, mutex create failed"); return; }
 
-  NimBLEDevice::init(BLE_DEVICE_NAME);
+  if (!NimBLEDevice::isInitialized()) {
+    NimBLEDevice::init(BLE_DEVICE_NAME);
+  }
   NimBLEDevice::setPower(ESP_PWR_LVL_P9);  // maximum TX power
 
   NimBLEServer *server = NimBLEDevice::createServer();
@@ -69,10 +71,16 @@ void BluetoothBle::init() {
 
   NimBLEAdvertising *adv = NimBLEDevice::getAdvertising();
   adv->addServiceUUID(NUS_SERVICE_UUID);
-  adv->setScanResponse(true);
-  adv->setMinPreferred(0x06);  // recommended connection interval range for stability
-  adv->setMaxPreferred(0x12);
-  NimBLEDevice::startAdvertising();
+  adv->enableScanResponse(true);
+  adv->setName(BLE_DEVICE_NAME);
+  adv->setDiscoverableMode(BLE_GAP_DISC_MODE_GEN);
+  adv->setConnectableMode(BLE_GAP_CONN_MODE_UND);
+  adv->setMinInterval(0x20);
+  adv->setMaxInterval(0x40);
+  if (!NimBLEDevice::startAdvertising()) {
+    DLF("ERR: BluetoothBle, startAdvertising failed");
+    return;
+  }
 
   VLF("MSG: BluetoothBle, advertising as '" BLE_DEVICE_NAME "'");
 
